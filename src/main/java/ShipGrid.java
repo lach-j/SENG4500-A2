@@ -1,6 +1,54 @@
+import java.util.Random;
+
 public class ShipGrid {
 
     private final ShipCell[][] cells = new ShipCell[10][10];
+    private final Random rand;
+
+    public ShipGrid() {
+        rand = new Random();
+    }
+
+    public ShipGrid(long seed) {
+        rand = new Random(seed);
+    }
+    public void addShip(Ship ship) {
+        var isInserted = false;
+
+        while (!isInserted) {
+
+            var isVertical = rand.nextInt(2) == 0;
+            var xMax = isVertical ? 10 : 11 - ship.length();
+            var yMax = !isVertical ? 10 : 11 - ship.length();
+
+            var startX = rand.nextInt(xMax);
+            var startY = rand.nextInt(yMax);
+
+            var x = startX;
+            var y = startY;
+
+            var isFree = false;
+            for (int i = 0; i < ship.length(); i++) {
+                if (cells[y][x] != null) break;
+                if (i == ship.length() - 1) {
+                    isFree = true;
+                    break;
+                }
+                if (isVertical) {
+                    y++;
+                } else {
+                    x++;
+                }
+            }
+            if (!isFree) continue;
+
+            for (int i = ( isVertical ? startY : startX ); i < ( isVertical ? startY : startX ) + ship.length(); i++ ) {
+                var newCell = new ShipCell(ship);
+                cells[isVertical ? i : startY][isVertical ? startX : i] = newCell;
+            }
+            isInserted = true;
+        }
+    }
 
 
     @Override public String toString() {

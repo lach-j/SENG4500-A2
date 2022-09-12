@@ -15,4 +15,14 @@ public class Ship {
         return Arrays.stream(cells).allMatch(ShipCell::getIsHit);
     }
 
+    public void addCell(ShipCell newCell) {
+        for (int i = 0; i < cells.length; i++)
+        {
+            if (cells[i] == null) {
+                cells[i] = newCell;
+                return;
+            }
+        }
+        throw new UnsupportedOperationException("All cells are full");
+    }
 }
