@@ -9,4 +9,8 @@ public class ShipCell {
     public boolean getIsHit() {
         return isHit;
     }
+
+    public void setIsHit(boolean isHit) {
+        this.isHit = isHit;
+    }
 }

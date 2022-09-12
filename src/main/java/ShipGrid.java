@@ -12,6 +12,13 @@ public class ShipGrid {
     public ShipGrid(long seed) {
         rand = new Random(seed);
     }
+
+    public boolean sendTorpedo(int x, int y) {
+        if (cells[y][x] == null) return false;
+        cells[y][x].setIsHit(true);
+        return true;
+    }
+
     public void addShip(Ship ship) {
         var isInserted = false;
 
@@ -52,6 +59,7 @@ public class ShipGrid {
 
 
     @Override public String toString() {
+
         var sb = new StringBuilder();
         sb.append("+---".repeat(cells.length));
         sb.append("+");
@@ -77,4 +85,5 @@ public class ShipGrid {
         }
         return sb.toString();
     }
+
 }

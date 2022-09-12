@@ -84,4 +84,42 @@ public class ShipGridTests {
         System.out.println(grid);
         Assert.assertEquals(POPULATED_GRID_STRING, grid.toString());
     }
+
+    @Test
+    public void ShipGrid_HitsAreCorrect() {
+
+        String POPULATED_GRID_STRING = """
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   |   |   |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   |   |   |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   |   |   |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   | ▣ | □ | □ | □ |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   |   |   |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   | □ | □ |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   |   |   |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   | □ | □ | □ |   |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                |   |   |   |   |   |   |   |   |   |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                | □ | □ | □ |   | □ | □ | □ | □ | □ |   |
+                +---+---+---+---+---+---+---+---+---+---+
+                """;
+
+        var grid = getPopulatedGrid();
+        var hitShip = grid.sendTorpedo(4, 3);
+        var hitWater = grid.sendTorpedo(2, 2);
+
+        Assert.assertTrue(hitShip);
+        Assert.assertFalse(hitWater);
+        System.out.println(grid);
+        Assert.assertEquals(POPULATED_GRID_STRING, grid.toString());
+    }
+
 }
