@@ -2,7 +2,11 @@ import java.util.Random;
 
 public class ShipGrid {
 
-    private final ShipCell[][] cells = new ShipCell[10][10];
+    private static final int WIDTH = 10;
+    private static final int HEIGHT = 10;
+
+    private final ShipCell[][] cells = new ShipCell[HEIGHT][WIDTH];
+    private final boolean[][] guesses = new boolean[HEIGHT][WIDTH];
     private final Random rand;
 
     public ShipGrid() {
@@ -14,6 +18,7 @@ public class ShipGrid {
     }
 
     public boolean sendTorpedo(int x, int y) {
+        guesses[y][x] = true;
         if (cells[y][x] == null) return false;
         cells[y][x].setIsHit(true);
         return true;
@@ -25,8 +30,8 @@ public class ShipGrid {
         while (!isInserted) {
 
             var isVertical = rand.nextInt(2) == 0;
-            var xMax = isVertical ? 10 : 11 - ship.length();
-            var yMax = !isVertical ? 10 : 11 - ship.length();
+            var xMax = isVertical ? WIDTH : WIDTH + 1 - ship.length();
+            var yMax = !isVertical ? HEIGHT : HEIGHT + 1 - ship.length();
 
             var startX = rand.nextInt(xMax);
             var startY = rand.nextInt(yMax);
@@ -49,7 +54,7 @@ public class ShipGrid {
             }
             if (!isFree) continue;
 
-            for (int i = ( isVertical ? startY : startX ); i < ( isVertical ? startY : startX ) + ship.length(); i++ ) {
+            for (int i = (isVertical ? startY : startX); i < (isVertical ? startY : startX) + ship.length(); i++) {
                 var newCell = new ShipCell(ship);
                 cells[isVertical ? i : startY][isVertical ? startX : i] = newCell;
                 ship.addCell(newCell);
@@ -59,17 +64,25 @@ public class ShipGrid {
     }
 
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
 
         var sb = new StringBuilder();
-        sb.append("+---".repeat(cells.length));
+        sb.append("+---".repeat(HEIGHT));
         sb.append("+");
         sb.append("\n");
-        for (var row: cells) {
+        for (var row = 0; row < HEIGHT; row++) {
             sb.append("|");
-            for (var cell : row) {
+            for (var col = 0; col < WIDTH; col++) {
+
+                var cell = cells[row][col];
+                var guess = guesses[row][col];
+
                 if (cell == null) {
-                    sb.append("   ");
+                    if (guess)
+                        sb.append(" ~ ");
+                    else
+                        sb.append("   ");
                 } else {
                     if (cell.getIsHit()) {
                         sb.append(" x ");
@@ -80,7 +93,7 @@ public class ShipGrid {
                 sb.append("|");
             }
             sb.append("\n");
-            sb.append("+---".repeat(row.length));
+            sb.append("+---".repeat(HEIGHT));
             sb.append("+");
             sb.append("\n");
         }
