@@ -68,7 +68,7 @@ public class ShipGrid {
     public String toString() {
 
         var sb = new StringBuilder();
-        sb.append("+---".repeat(HEIGHT));
+        sb.append("+---".repeat(WIDTH));
         sb.append("+");
         sb.append("\n");
         for (var row = 0; row < HEIGHT; row++) {
@@ -93,7 +93,7 @@ public class ShipGrid {
                 sb.append("|");
             }
             sb.append("\n");
-            sb.append("+---".repeat(HEIGHT));
+            sb.append("+---".repeat(WIDTH));
             sb.append("+");
             sb.append("\n");
         }
