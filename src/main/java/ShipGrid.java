@@ -52,6 +52,7 @@ public class ShipGrid {
             for (int i = ( isVertical ? startY : startX ); i < ( isVertical ? startY : startX ) + ship.length(); i++ ) {
                 var newCell = new ShipCell(ship);
                 cells[isVertical ? i : startY][isVertical ? startX : i] = newCell;
+                ship.addCell(newCell);
             }
             isInserted = true;
         }
@@ -71,7 +72,7 @@ public class ShipGrid {
                     sb.append("   ");
                 } else {
                     if (cell.getIsHit()) {
-                        sb.append(" ▣ ");
+                        sb.append(" x ");
                     } else {
                         sb.append(" □ ");
                     }

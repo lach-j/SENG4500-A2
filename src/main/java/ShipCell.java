@@ -1,5 +1,5 @@
 public class ShipCell {
-    private Ship ship;
+    private final Ship ship;
     private boolean isHit;
 
     public ShipCell(Ship ship) {
@@ -12,5 +12,9 @@ public class ShipCell {
 
     public void setIsHit(boolean isHit) {
         this.isHit = isHit;
+    }
+
+    public Ship getShip() {
+        return ship;
     }
 }
