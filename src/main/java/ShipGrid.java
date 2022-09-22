@@ -1,9 +1,6 @@
 import java.util.Random;
 
-public class ShipGrid {
-
-    private static final int WIDTH = 10;
-    private static final int HEIGHT = 10;
+public class ShipGrid extends AbstractGrid {
 
     private final ShipCell[][] cells = new ShipCell[HEIGHT][WIDTH];
     private final boolean[][] guesses = new boolean[HEIGHT][WIDTH];
@@ -60,6 +57,24 @@ public class ShipGrid {
                 ship.addCell(newCell);
             }
             isInserted = true;
+        }
+    }
+
+    protected String getCellString(int row, int col) {
+        var cell = cells[row][col];
+        var guess = guesses[row][col];
+
+        if (cell == null) {
+            if (guess)
+                return "~";
+            else
+                return " ";
+        } else {
+            if (cell.getIsHit()) {
+                return "X";
+            } else {
+                return "□";
+            }
         }
     }
 

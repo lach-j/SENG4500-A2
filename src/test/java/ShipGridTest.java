@@ -1,7 +1,7 @@
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ShipGridTests {
+public class ShipGridTest {
 
     @Test
     public void ShipGrid_PrintsEmptyGrid() {
