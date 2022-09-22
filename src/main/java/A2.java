@@ -13,8 +13,8 @@ public class A2 {
             InetAddress dAdd = InetAddress.getByName(args[0]);
             int dPort = Integer.parseInt(args[1]);
 
-            var nm = new GameManager(dAdd, dPort);
-            nm.run();
+            var nm = new NetworkingManager(dAdd, dPort);
+            nm.createConnection();
 
         } catch (Exception e) {
             e.printStackTrace();
