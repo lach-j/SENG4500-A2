@@ -10,12 +10,13 @@ public class GuessGrid extends AbstractGrid {
         }
     }
 
-    public void addHit(int row, int col) {
-        guesses[row][col] = CellState.HIT;
+
+    public void addHit(char row, int col) {
+        guesses[resolveIndexByChar(row)][col-1] = CellState.HIT;
     }
 
-    public void addMiss(int row, int col) {
-        guesses[row][col] = CellState.MISS;
+    public void addMiss(char row, int col) {
+        guesses[resolveIndexByChar(row)][col-1] = CellState.MISS;
     }
 
     @Override

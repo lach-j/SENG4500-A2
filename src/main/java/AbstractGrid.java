@@ -4,6 +4,11 @@ public abstract class AbstractGrid {
     protected static final int WIDTH = 10;
     protected static final int HEIGHT = 10;
 
+
+    protected int resolveIndexByChar(char row) {
+        return row - 65;
+    }
+
     @Override
     public String toString() {
         char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();

@@ -99,7 +99,7 @@ public class ShipGridTest {
                 +---+---+---+---+---+---+---+---+---+---+
               C |   |   | ~ |   |   |   |   |   |   |   |
                 +---+---+---+---+---+---+---+---+---+---+
-              D |   |   |   |   | x | □ | □ | □ |   |   |
+              D |   |   |   |   | X | □ | □ | □ |   |   |
                 +---+---+---+---+---+---+---+---+---+---+
               E |   |   |   |   |   |   |   |   |   |   |
                 +---+---+---+---+---+---+---+---+---+---+
@@ -116,8 +116,8 @@ public class ShipGridTest {
                 """;
 
         var grid = getPopulatedGrid();
-        var hitShip = grid.sendTorpedo(4, 3);
-        var hitWater = grid.sendTorpedo(2, 2);
+        var hitShip = grid.sendTorpedo('D', 5);
+        var hitWater = grid.sendTorpedo('C', 3);
 
         Assert.assertTrue(hitShip);
         Assert.assertFalse(hitWater);
@@ -142,10 +142,10 @@ public class ShipGridTest {
         grid.addShip(ship4);
         grid.addShip(ship5);
 
-        grid.sendTorpedo(4, 3);
-        grid.sendTorpedo(5, 3);
-        grid.sendTorpedo(6, 3);
-        grid.sendTorpedo(7, 3);
+        grid.sendTorpedo('D', 5);
+        grid.sendTorpedo('D', 6);
+        grid.sendTorpedo('D', 7);
+        grid.sendTorpedo('D', 8);
 
         Assert.assertTrue(ship2.isSunk());
 

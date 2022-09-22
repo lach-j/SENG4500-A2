@@ -14,7 +14,11 @@ public class ShipGrid extends AbstractGrid {
         rand = new Random(seed);
     }
 
-    public boolean sendTorpedo(int x, int y) {
+    public boolean sendTorpedo(char row, int col) {
+
+        var y = resolveIndexByChar(row);
+        var x = col - 1;
+
         guesses[y][x] = true;
         if (cells[y][x] == null) return false;
         cells[y][x].setIsHit(true);
@@ -77,49 +81,4 @@ public class ShipGrid extends AbstractGrid {
             }
         }
     }
-
-
-    @Override
-    public String toString() {
-        char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-        var sb = new StringBuilder();
-
-        sb.append(" ");
-        for (int i = 0; i < WIDTH; i++)
-            sb.append("   ").append(i+1);
-
-        sb.append("\n  ");
-        sb.append("+---".repeat(WIDTH));
-        sb.append("+");
-        sb.append("\n");
-        for (var row = 0; row < HEIGHT; row++) {
-            sb.append(alphabet[row]);
-            sb.append(" |");
-            for (var col = 0; col < WIDTH; col++) {
-
-                var cell = cells[row][col];
-                var guess = guesses[row][col];
-
-                if (cell == null) {
-                    if (guess)
-                        sb.append(" ~ ");
-                    else
-                        sb.append("   ");
-                } else {
-                    if (cell.getIsHit()) {
-                        sb.append(" x ");
-                    } else {
-                        sb.append(" □ ");
-                    }
-                }
-                sb.append("|");
-            }
-            sb.append("\n  ");
-            sb.append("+---".repeat(WIDTH));
-            sb.append("+");
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
 }
