@@ -8,6 +8,24 @@ import java.util.Scanner;
 
 public class A2 {
 
+    private static boolean isInRange(String coordinates) {
+        var row = coordinates.charAt(0);
+        try {
+            
+            var col = Integer.parseInt(coordinates.substring(1));
+            if (row < 'A' || row > 'J')
+                return false;
+
+            if (col < 1 || col > 10)
+                return false;
+
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static void main(String[] args) throws UnknownHostException, InterruptedException {
 
         if (args.length != 2) {
@@ -51,6 +69,10 @@ public class A2 {
                 if (myTurn) {
                     System.out.println("ENTER COORDINATES:");
                     var coordinates = userIn.nextLine();
+                    while (!isInRange(coordinates)) {
+                        System.out.println("Coordinates not valid, please try again using the format <ROW><COLUMN>.");
+                        coordinates = userIn.nextLine();
+                    }
                     var message = String.format("FIRE:%s", coordinates);
                     out.println(message);
                     var msg = in.readLine();
