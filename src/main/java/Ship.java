@@ -2,9 +2,19 @@ import java.util.Arrays;
 
 public class Ship {
     private final ShipCell[] cells;
+    private String name;
+
+    public Ship(int length, String name) {
+        cells = new ShipCell[length];
+        this.name = name;
+    }
 
     public Ship(int length) {
-        cells = new ShipCell[length];
+        this(length, "");
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int length() {
