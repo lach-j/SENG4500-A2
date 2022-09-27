@@ -14,6 +14,8 @@ public class NetworkingManager implements Closeable {
     private Socket tcpSocket;
     private ServerSocket serverSocket;
 
+    private static int BROADCAST_TIMEOUT = 30000;
+
     public NetworkingManager(InetAddress address, int port) {
         this.broadcastAddress = address;
         this.broadcastPort = port;
@@ -30,7 +32,6 @@ public class NetworkingManager implements Closeable {
             ServerSocket ss = new ServerSocket(gameCommandPort);
             serverSocket = ss;
             Socket currentConnection = ss.accept();
-            System.out.println("CLIENT HAS CONNECTED!");
             connected = true;
             this.tcpSocket = currentConnection;
             isClient = false;
@@ -45,7 +46,7 @@ public class NetworkingManager implements Closeable {
     private void broadcastGame(int gameCommandPort) {
         try (DatagramSocket udpSocket = new DatagramSocket(broadcastPort)) {
             this.udpSocket = udpSocket;
-            udpSocket.setSoTimeout(3000);
+            udpSocket.setSoTimeout(BROADCAST_TIMEOUT);
             var request = String.format("NEW PLAYER:%d", gameCommandPort);
             var requestBytes = request.getBytes(StandardCharsets.UTF_8);
 
@@ -59,11 +60,9 @@ public class NetworkingManager implements Closeable {
                         DatagramPacket outPacket = new DatagramPacket(requestBytes, requestBytes.length,
                                 broadcastAddress, broadcastPort);
                         udpSocket.send(outPacket);
-                        System.out.printf("SENT: %s%n", request);
                     }
                     continue;
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                } catch (SocketException e) {
                 }
                 String s = new String(buf, StandardCharsets.UTF_8).replaceAll("\u0000.*", "");
 
@@ -71,7 +70,6 @@ public class NetworkingManager implements Closeable {
                     continue;
 
                 if (s.split(":")[0].equals("NEW PLAYER") && gameCommandPort != Integer.parseInt(s.split(":")[1])) {
-                    System.out.println("RECEIVED: " + s);
                     var port = Integer.parseInt(s.split(":")[1]);
                     var addr = packet.getAddress();
                     joinExistingGame(port, addr);
@@ -88,7 +86,6 @@ public class NetworkingManager implements Closeable {
             Socket s = new Socket(address, port);
             connected = true;
             isClient = true;
-            System.out.println("JOINING SOCKET ON PORT " + port);
             this.tcpSocket = s;
         } catch (IOException ex) {
 
@@ -105,13 +102,13 @@ public class NetworkingManager implements Closeable {
 
     @Override
     public void close() throws IOException {
-        System.out.println("NM CLOSED");
-        if (tcpSocket != null) {
+        if (tcpSocket != null)
             tcpSocket.close();
-        }
 
-        if (serverSocket != null) {
+        if (serverSocket != null)
             serverSocket.close();
-        }
+
+        if (udpSocket != null)
+            udpSocket.close();
     }
 }
