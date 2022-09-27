@@ -21,9 +21,15 @@ public class NetworkingManager implements Closeable {
         this.broadcastPort = port;
     }
 
-    public Socket createConnection() {
+    private static int generateRandomPort() {
         Random rand = new Random();
-        int gameCommandPort = rand.nextInt(1000) + 5000;
+        int MIN_PORT = 5000;
+        int MAX_PORT = 6000;
+        return rand.nextInt(MAX_PORT-MIN_PORT) + MIN_PORT;
+    }
+
+    public Socket createConnection() {
+        int gameCommandPort = generateRandomPort();
 
         var udpThread = new Thread(() -> broadcastGame(gameCommandPort));
         udpThread.start();
@@ -66,8 +72,9 @@ public class NetworkingManager implements Closeable {
                 }
                 String s = new String(buf, StandardCharsets.UTF_8).replaceAll("\u0000.*", "");
 
-                if (s.isEmpty())
+                if (s.isEmpty()) {
                     continue;
+                }
 
                 if (s.split(":")[0].equals("NEW PLAYER") && gameCommandPort != Integer.parseInt(s.split(":")[1])) {
                     var port = Integer.parseInt(s.split(":")[1]);

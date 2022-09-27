@@ -69,16 +69,9 @@ public class ShipGrid extends AbstractGrid {
         var guess = guesses[row][col];
 
         if (cell == null) {
-            if (guess)
-                return "~";
-            else
-                return " ";
+            return guess ? "~" : " ";
         } else {
-            if (cell.getIsHit()) {
-                return "X";
-            } else {
-                return "□";
-            }
+            return cell.getIsHit() ? "X" : "□";
         }
     }
 }

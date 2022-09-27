@@ -8,17 +8,17 @@ import java.util.Scanner;
 
 public class A2 {
 
-    private static boolean isInRange(String coordinates) {
+    public static boolean isValidCoords(String coordinates) {
         var row = coordinates.charAt(0);
+        if (row < 'A' || row > 'J') {
+            return false;
+        }
+
         try {
-            
             var col = Integer.parseInt(coordinates.substring(1));
-            if (row < 'A' || row > 'J')
+            if (col < 1 || col > 10) {
                 return false;
-
-            if (col < 1 || col > 10)
-                return false;
-
+            }
         } catch (NumberFormatException e) {
             return false;
         }
@@ -69,7 +69,7 @@ public class A2 {
                 if (myTurn) {
                     System.out.println("ENTER COORDINATES:");
                     var coordinates = userIn.nextLine();
-                    while (!isInRange(coordinates)) {
+                    while (!isValidCoords(coordinates)) {
                         System.out.println("Coordinates not valid, please try again using the format <ROW><COLUMN>.");
                         coordinates = userIn.nextLine();
                     }
@@ -83,8 +83,9 @@ public class A2 {
                         System.out.println("Torpedo Missed");
                         guesses.addMiss(row, col);
                     } else {
-                        if (response[0].equals("HIT"))
+                        if (response[0].equals("HIT")) {
                             System.out.println("Torpedo Hit");
+                        }
                         else if (response[0].equals("GAME OVER")) {
                             System.out.println("Torpedo Hit and Sunk " + response[2] + ", ALL SHIPS SUNK - YOU WIN!");
                             nm.close();
