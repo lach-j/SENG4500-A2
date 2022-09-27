@@ -26,7 +26,7 @@ public class A2 {
                 PrintWriter out = new PrintWriter(s.getOutputStream(), true);
                 Scanner userIn = new Scanner(System.in);) {
 
-            System.out.println(nm.isClient() ? "IS CLIENT" : "IS SERVER");
+            System.out.println(nm.isClient() ? "CONNECTED AS PLAYER 2" : "CONNECTED AS PLAYER 1");
 
             var shipList = new ArrayList<Ship>();
 
@@ -63,7 +63,11 @@ public class A2 {
                     } else {
                         if (response[0].equals("HIT"))
                             System.out.println("Torpedo Hit");
-                        else
+                        else if (response[0].equals("GAME OVER")) {
+                            System.out.println("Torpedo Hit and Sunk " + response[2] + ", ALL SHIPS SUNK - YOU WIN!");
+                            nm.close();
+                            System.exit(1);
+                        } else
                             System.out.println("Torpedo Hit and Sunk " + response[2]);
 
                         guesses.addHit(row, col);
@@ -81,11 +85,17 @@ public class A2 {
                         if (hitShip == null) {
                             response = String.format("MISS:%s", message[1]);
                         } else {
-                            if (!hitShip.isSunk())
-                            {
+                            if (!hitShip.isSunk()) {
                                 response = String.format("HIT:%s", message[1]);
                             } else {
-                                response = String.format("SUNK:%s:%s", message[1], hitShip.getName());
+                                if (shipList.stream().allMatch(Ship::isSunk)) {
+                                    response = String.format("GAME OVER:%s:%s", message[1], hitShip.getName());
+                                    System.out.println("ALL YOUR SHIPS HAVE BEEN SUNK - YOU LOSE!");
+                                    out.println(response);
+                                    nm.close();
+                                    System.exit(1);
+                                } else
+                                    response = String.format("SUNK:%s:%s", message[1], hitShip.getName());
                             }
                         }
                         out.println(response);
