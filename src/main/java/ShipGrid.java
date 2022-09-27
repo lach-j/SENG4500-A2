@@ -14,15 +14,15 @@ public class ShipGrid extends AbstractGrid {
         rand = new Random(seed);
     }
 
-    public boolean sendTorpedo(char row, int col) {
+    public Ship sendTorpedo(char row, int col) {
 
         var y = resolveIndexByChar(row);
         var x = col - 1;
 
         guesses[y][x] = true;
-        if (cells[y][x] == null) return false;
+        if (cells[y][x] == null) return null;
         cells[y][x].setIsHit(true);
-        return true;
+        return cells[y][x].getShip();
     }
 
     public void addShip(Ship ship) {

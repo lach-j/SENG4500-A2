@@ -119,8 +119,8 @@ public class ShipGridTest {
         var hitShip = grid.sendTorpedo('D', 5);
         var hitWater = grid.sendTorpedo('C', 3);
 
-        Assert.assertTrue(hitShip);
-        Assert.assertFalse(hitWater);
+        Assert.assertNotNull(hitShip);
+        Assert.assertNull(hitWater);
         System.out.println(grid);
         Assert.assertEquals(POPULATED_GRID_STRING, grid.toString());
     }
