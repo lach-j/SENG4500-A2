@@ -25,7 +25,7 @@ public class NetworkingManager implements Closeable {
         Random rand = new Random();
         int MIN_PORT = 5000;
         int MAX_PORT = 6000;
-        return rand.nextInt(MAX_PORT-MIN_PORT) + MIN_PORT;
+        return rand.nextInt(MAX_PORT - MIN_PORT) + MIN_PORT;
     }
 
     public Socket createConnection() {
@@ -50,9 +50,12 @@ public class NetworkingManager implements Closeable {
     }
 
     private void broadcastGame(int gameCommandPort) {
-        try (DatagramSocket udpSocket = new DatagramSocket(broadcastPort)) {
-            this.udpSocket = udpSocket;
+        try (DatagramSocket udpSocket = new DatagramSocket(null);) {
+            // udpSocket.setOption(StandardSocketOptions.SO_REUSEPORT, true);
+            udpSocket.setReuseAddress(true);
             udpSocket.setSoTimeout(BROADCAST_TIMEOUT);
+            udpSocket.bind(new InetSocketAddress(broadcastAddress, broadcastPort));
+            this.udpSocket = udpSocket;
             var request = String.format("NEW PLAYER:%d", gameCommandPort);
             var requestBytes = request.getBytes(StandardCharsets.UTF_8);
 
@@ -65,7 +68,9 @@ public class NetworkingManager implements Closeable {
                     if (!connected) {
                         DatagramPacket outPacket = new DatagramPacket(requestBytes, requestBytes.length,
                                 broadcastAddress, broadcastPort);
-                        udpSocket.send(outPacket);
+                        try (DatagramSocket sendSocket = new DatagramSocket(generateRandomPort());) {
+                            sendSocket.send(outPacket);
+                        }
                     }
                     continue;
                 } catch (SocketException e) {
