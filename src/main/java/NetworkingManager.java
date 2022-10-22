@@ -50,7 +50,7 @@ public class NetworkingManager implements Closeable {
     }
 
     private void broadcastGame(int gameCommandPort) {
-        var BROADCAST_TIMEOUT = 30000;
+        var BROADCAST_TIMEOUT = 3000;
 
         try (DatagramSocket udpSocket = new DatagramSocket(null);) {
             udpSocket.setReuseAddress(true); // Setting reuseAddress here to allow communication on the same host
@@ -72,12 +72,13 @@ public class NetworkingManager implements Closeable {
                     if (!connected) {
                         DatagramPacket outPacket = new DatagramPacket(requestBytes, requestBytes.length,
                                 broadcastAddress, broadcastPort);
-                        try (DatagramSocket sendSocket = new DatagramSocket(generateRandomPort());) {
-                            sendSocket.send(outPacket);
-                        }
+                            System.out.printf("BROADCASTING \"%s\" ON %s%n", request, broadcastAddress + ":" + broadcastPort);
+                            System.out.flush();
+                            udpSocket.send(outPacket);
                     }
                     continue;
                 } catch (SocketException e) {
+                    // Ignore
                 }
 
                 // Trimming the "null" chars from the buffer.
@@ -88,7 +89,7 @@ public class NetworkingManager implements Closeable {
                 }
 
                 // Pull the TCP port off the "NEW PLAYER" message
-                if (s.split(":")[0].equals("NEW PLAYER")) {
+                if (s.split(":")[0].equals("NEW PLAYER") && gameCommandPort != Integer.parseInt(s.split(":")[1])) {
                     var port = Integer.parseInt(s.split(":")[1]);
                     var addr = packet.getAddress();
                     joinExistingGame(port, addr);
