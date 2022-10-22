@@ -1,10 +1,11 @@
 import java.util.Arrays;
 
-public class GuessGrid extends AbstractGrid {
+public class GuessGrid extends PrintableGrid {
 
-    private CellState[][] guesses = new CellState[HEIGHT][WIDTH];
+    private final CellState[][] guesses = new CellState[HEIGHT][WIDTH];
 
     public GuessGrid() {
+        // Fill each cell with BLANK initially.
         for (var row : guesses) {
             Arrays.fill(row, CellState.BLANK);
         }
@@ -21,6 +22,8 @@ public class GuessGrid extends AbstractGrid {
 
     @Override
     protected String getCellString(int row, int col) {
+        // Used in the AbstractGrid toString method.
+        // Resolves a character based what guess is recorded in the coordinates.
         return switch (guesses[row][col]) {
             case BLANK -> " ";
             case MISS -> "~";

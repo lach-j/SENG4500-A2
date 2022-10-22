@@ -1,3 +1,5 @@
+// Each Ship is comprised of a number of ShipCells
+// These cells have a reference to their parent Ship
 public class ShipCell {
     private final Ship ship;
     private boolean isHit;

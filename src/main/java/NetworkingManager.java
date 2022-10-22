@@ -14,8 +14,6 @@ public class NetworkingManager implements Closeable {
     private Socket tcpSocket;
     private ServerSocket serverSocket;
 
-    private static int BROADCAST_TIMEOUT = 30000;
-
     public NetworkingManager(InetAddress address, int port) {
         this.broadcastAddress = address;
         this.broadcastPort = port;
@@ -42,20 +40,24 @@ public class NetworkingManager implements Closeable {
             this.tcpSocket = currentConnection;
             isClient = false;
 
-            // Close the connection early so socket doesnt need to timeout.
+            // Close the connection early so socket doesn't need to timeout.
+            // As a result the "udpThread" runs to completion and the thread is killed.
             udpSocket.close();
-        } catch (IOException e) {
+        } catch (IOException ex) {
+            // Ignore
         }
         return tcpSocket;
     }
 
     private void broadcastGame(int gameCommandPort) {
+        var BROADCAST_TIMEOUT = 30000;
+
         try (DatagramSocket udpSocket = new DatagramSocket(null);) {
-            // udpSocket.setOption(StandardSocketOptions.SO_REUSEPORT, true);
-            udpSocket.setReuseAddress(true);
+            udpSocket.setReuseAddress(true); // Setting reuseAddress here to allow communication on the same host
             udpSocket.setSoTimeout(BROADCAST_TIMEOUT);
             udpSocket.bind(new InetSocketAddress(broadcastAddress, broadcastPort));
             this.udpSocket = udpSocket;
+
             var request = String.format("NEW PLAYER:%d", gameCommandPort);
             var requestBytes = request.getBytes(StandardCharsets.UTF_8);
 
@@ -63,8 +65,10 @@ public class NetworkingManager implements Closeable {
                 byte[] buf = new byte[32];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 try {
+                    // Listen for UDP broadcasts
                     udpSocket.receive(packet);
                 } catch (SocketTimeoutException e) {
+                    // After the socket times out, broadcast our own "NEW PLAYER" packet
                     if (!connected) {
                         DatagramPacket outPacket = new DatagramPacket(requestBytes, requestBytes.length,
                                 broadcastAddress, broadcastPort);
@@ -75,17 +79,20 @@ public class NetworkingManager implements Closeable {
                     continue;
                 } catch (SocketException e) {
                 }
+
+                // Trimming the "null" chars from the buffer.
                 String s = new String(buf, StandardCharsets.UTF_8).replaceAll("\u0000.*", "");
 
                 if (s.isEmpty()) {
                     continue;
                 }
 
-                if (s.split(":")[0].equals("NEW PLAYER") && gameCommandPort != Integer.parseInt(s.split(":")[1])) {
+                // Pull the TCP port off the "NEW PLAYER" message
+                if (s.split(":")[0].equals("NEW PLAYER")) {
                     var port = Integer.parseInt(s.split(":")[1]);
                     var addr = packet.getAddress();
                     joinExistingGame(port, addr);
-                    serverSocket.close();
+                    serverSocket.close(); // As this is player 2, the ServerSocket doesn't need to be open anymore.
                 }
             }
         } catch (Exception e) {
@@ -100,7 +107,7 @@ public class NetworkingManager implements Closeable {
             isClient = true;
             this.tcpSocket = s;
         } catch (IOException ex) {
-
+            // Ignore
         }
     }
 
@@ -112,6 +119,7 @@ public class NetworkingManager implements Closeable {
         return isClient;
     }
 
+    // Overrides the Closable close implementation to close all sockets in the program.
     @Override
     public void close() throws IOException {
         if (tcpSocket != null)

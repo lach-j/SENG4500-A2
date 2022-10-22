@@ -1,8 +1,9 @@
 import java.util.Arrays;
 
+// Ship object can query all its cells to determine its overall state as well as store data such as its name.
 public class Ship {
     private final ShipCell[] cells;
-    private String name;
+    private final String name;
 
     public Ship(int length, String name) {
         cells = new ShipCell[length];
@@ -21,6 +22,7 @@ public class Ship {
         return cells.length;
     }
 
+    // Check every cell in the ship, if they are all hit then the ship is sunk.
     public boolean isSunk() {
         return Arrays.stream(cells).allMatch(ShipCell::getIsHit);
     }

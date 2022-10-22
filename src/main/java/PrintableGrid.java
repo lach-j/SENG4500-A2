@@ -1,10 +1,12 @@
-public abstract class AbstractGrid {
+// PrintableGrid is implemented so the toString method doesn't need to be duplicated for both types of grid
+public abstract class PrintableGrid {
 
     protected abstract String getCellString(int row, int col);
     protected static final int WIDTH = 10;
     protected static final int HEIGHT = 10;
 
 
+    // Takes a coordinate row and returns its corresponding Grid index
     protected int resolveIndexByChar(char row) {
         return row - 65;
     }
@@ -26,6 +28,7 @@ public abstract class AbstractGrid {
             sb.append(alphabet[row]);
             sb.append(" |");
             for (var col = 0; col < WIDTH; col++) {
+                // This is where characters within each cell is resolved.
                 sb.append(" ").append(getCellString(row, col)).append(" ");
                 sb.append("|");
             }
